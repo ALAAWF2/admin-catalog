@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة التحكم</title>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
+    .btn-login { background: black; color: white; padding: 10px 20px; border: none; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>تسجيل الدخول عبر GitHub</h2>
+    <button onclick="loginWithGitHub()" class="btn-login">تسجيل الدخول</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    const clientId = "0v23liSYLxX0MtyB0CH3";
+    const repo = "admin-catalog";
+    const user = "ALAAWF2";
+
+    function loginWithGitHub() {
+      const redirectUri = location.origin + "/admin.html";
+      window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=repo`;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+
+    if (code) {
+      document.getElementById("status").innerText = "تم تسجيل الدخول (رمز: " + code + ")";
+      // الخطوة التالية ستكون استبدال هذا الرمز بـ access_token من خلال الخادم أو GitHub Action
+    }
+  </script>
+</body>
+</html>
