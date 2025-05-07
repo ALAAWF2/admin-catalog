@@ -23,7 +23,8 @@
     const user = "ALAAWF2";
 
     function loginWithGitHub() {
-      const redirectUri = location.origin + "/admin.html";
+      const redirectUri = "https://alaawf2.github.io/admin-catalog/admin.html";
+
       window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=repo`;
     }
 
