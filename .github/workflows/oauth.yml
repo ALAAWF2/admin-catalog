@@ -1,20 +1,25 @@
-name: GitHub OAuth Exchange
+name: GitHub OAuth Token Exchange
 
 on:
   workflow_dispatch:
     inputs:
       code:
-        description: 'OAuth Code'
+        description: 'OAuth code from GitHub'
         required: true
 
 jobs:
-  exchange-token:
+  get-token:
     runs-on: ubuntu-latest
     steps:
-      - name: Exchange OAuth code for token
+      - name: Exchange code for access_token
         run: |
-          curl -X POST https://github.com/login/oauth/access_token \
+          echo "Getting access_token for code: ${{ github.event.inputs.code }}"
+          
+          RESPONSE=$(curl -s -X POST https://github.com/login/oauth/access_token \
             -H "Accept: application/json" \
             -d "client_id=${{ secrets.CLIENT_ID }}" \
             -d "client_secret=${{ secrets.CLIENT_SECRET }}" \
-            -d "code=${{ github.event.inputs.code }}"
+            -d "code=${{ github.event.inputs.code }}")
+
+          echo "Response:"
+          echo "$RESPONSE"
