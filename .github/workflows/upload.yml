@@ -1,0 +1,42 @@
+name: GitHub OAuth Upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      code:
+        description: 'GitHub OAuth Code'
+        required: true
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Exchange code for access token
+        id: get_token
+        run: |
+          response=$(curl -X POST https://github.com/login/oauth/access_token \
+            -H "Accept: application/json" \
+            -d client_id=${{ secrets.CLIENT_ID }} \
+            -d client_secret=${{ secrets.CLIENT_SECRET }} \
+            -d code=${{ github.event.inputs.code }})
+          echo "RESPONSE=$response"
+          echo "::set-output name=token::$(echo $response | jq -r .access_token)"
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+
+      - name: Upload file
+        run: |
+          content=$(base64 -w 0 ./cattemp.xlsx)
+          curl -X PUT https://api.github.com/repos/${{ github.repository }}/contents/cattemp.xlsx \
+            -H "Authorization: token ${{ steps.get_token.outputs.token }}" \
+            -H "Content-Type: application/json" \
+            -d @- <<EOF
+          {
+            "message": "تحديث ملف المنتجات",
+            "content": "$content"
+          }
+EOF
